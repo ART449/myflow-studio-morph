@@ -1,0 +1,31 @@
+#splash {
+  position: absolute;
+  inset: 0;
+  z-index: 10;
+  background: var(--bg);
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+  gap: clamp(10px, 2.5vh, 16px);
+  padding: max(16px, env(safe-area-inset-top)) 20px max(24px, env(safe-area-inset-bottom));
+  text-align: center;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+#splash h1 { font-size: clamp(26px, 8vw, 38px); font-weight: 800; letter-spacing: .04em; margin-top: 6vh; }
+#splash h1 span { color: var(--ylw); }
+#splash .warn {
+  color: var(--red); font-weight: 800; font-size: clamp(13px, 3.5vw, 15px);
+  background: rgba(255,59,92,.12); padding: 10px 16px; border-radius: 12px; border: 1px solid var(--red);
+}
+#splash p { color: var(--gray); font-size: clamp(14px, 4vw, 16px); line-height: 1.5; max-width: 420px; }
+#splash ul { list-style: none; color: var(--cream); font-size: clamp(13px, 3.8vw, 15px); line-height: 1.55; text-align: left; max-width: 420px; margin: 4px 0; }
+#splash li { margin: 6px 0; padding-left: 24px; position: relative; }
+#splash li::before { content: "✓"; position: absolute; left: 0; color: var(--green); font-weight: 800; }
+#btnStart {
+  flex: none; width: min(320px, 88%); min-height: 56px; padding: 18px; font-size: 18px;
+  background: var(--ylw); color: var(--bg); border: none; border-radius: 16px; font-weight: 800;
+  margin-top: auto;
+}
+#btnStart:disabled { opacity: .6; }

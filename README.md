@@ -1,37 +1,71 @@
-# MyFlow STUDIO — Mano Morph + DAW
+# MyFlow STUDIO v2 — React + AI Beats
 
-Armonizador vocal con auto-tune, control gestual y mini-DAW integrado.
-Un solo archivo HTML. Cero instalación. Corre en cualquier navegador moderno.
+Estudio vocal con auto-tune, control gestual, beats generados por IA y mini-DAW.
+Ahora en React + Vite, con backend Python y servicio de beats MusicGen.
 
-> "El sistema parpadea, pero el código no miente." — IArtLabs
+> Demo: `/demos/myflow-studio/` en [iartlabs.lat](https://iartlabs.lat)  
+> Repo: `ART449/myflow-studio-morph`
 
 ## 🎤 ¿Qué hace?
 
-Cantas al micrófono y **mueves la pinza pulgar-índice frente a la cámara**
-para controlar la mezcla entre tu voz natural y un arreglo vocal producido
-en tiempo real.
+- **Auto-tune** a 7 escalas musicales
+- **Armonizador 3 voces** con intervalos y género independiente
+- **Grabación vertical 9:16** lista para compartir
+- **Beat IA** con MusicGen: elige estilo, BPM y duración
+- **Control por gestos** de mano: graba, genera beats, cambia estilos
+- **Mini-DAW**: waveform, trim, EQ 3-bandas, export WAV
+- **Backend API** para presets, uploads, health y SSE
 
-- **Auto-tune** a 7 escalas musicales (mayor, menor, pentatónica, dórica...)
-- **Armonizador 3 voces** con intervalos configurables
-- **Género independiente por voz** (♂ masculino / ♀ femenino)
-- **Delay por voz** para espacialidad de coro real
-- **Presets de coro**: Dueto, Coro 3, Gregoriano, Gospel
-- **Grabación vertical 9:16** nativa para TikTok/Reels
-- **Mini-DAW post-grabación**: waveform, trim, EQ 3-bandas, export WAV
-- **Efectos**: formant shift, noise gate, reverb convolucional, bitcrusher
+## 📦 Arquitectura
 
-## 📱 Cómo usar (2 minutos)
+```
+myflow-studio-morph/
+├── myflow-studio/    # App React + Vite
+├── api/server.py     # Backend Python (sirve build + API)
+├── beat-ia-service/  # MusicGen service (FastAPI)
+├── dist/             # Build de producción
+├── Dockerfile        # Imagen del STUDIO
+├── docker-compose.yml # STUDIO + Beat IA
+└── IARTLABS/demos/myflow-studio/  # Página demo
+```
 
-1. Descarga `mano_morph_studio.html`
-2. `python3 -m http.server 8000`
-3. Chrome → `http://localhost:8000/mano_morph_studio.html`
-4. **Audífonos puestos** (obligatorio, sin ellos se acopla)
-5. INICIAR → dar permisos de cámara + mic
-6. Calibra: mano cerrada → "Cal CERRAR", mano abierta → "Cal ABRIR"
-7. Preset rápido: pulsa **Dueto**, **Coro 3**, **Grego** o **Gospel**
-8. REC → canta → Compartir / Guardar
+## 🚀 Correr local
 
-> Tiene que ser por `localhost` (servido con http.server), no abriendo el archivo directo — Chrome solo da cámara/mic en contexto seguro.
+```bash
+# 1. Backend STUDIO
+cd myflow-studio-morph
+python api/server.py --port 8774 --host 0.0.0.0
+
+# 2. Beat IA service (en otra terminal)
+cd beat-ia-service
+.\venv\Scripts\python main.py
+
+# 3. Abrir navegador
+open http://localhost:8774
+```
+
+## 🐳 Docker
+
+```bash
+docker-compose up --build -d
+```
+
+## 📱 Mobile
+
+En celulares se requiere HTTPS para cámara/micrófono. Se recomienda desplegar con certificado o usar Tailscale.
+
+## 🖐️ Gestos
+
+| Gesto | Acción |
+|---|---|
+| ✊ Puño cerrado + bajar | Grabar / detener |
+| ✋ Palma abierta | Detener todo |
+| 👍 Pulgar arriba | Play / pause beat |
+| ☝ Anular extendido | Abrir / cerrar Beat IA |
+| 👌 Pulgar + índice círculo | Generar beat |
+| ✌ Índice + medio | Cambiar estilo de beat |
+
+> "El sistema parpadea, pero el código no miente." — IArtLabs
 
 ## 🎛 Panel de producción
 
@@ -64,6 +98,16 @@ Después de grabar:
 4. **Procesar** → renderiza con OfflineAudioContext
 5. **Exportar WAV** → descarga PCM 16-bit masterizado
 
+## 🎧 Herramientas para el creador
+
+| Herramienta | Para qué sirve |
+|---|---|
+| **Tuner** | Ver tu afinación en vivo. Útil para calentar y corregir tendencias. |
+| **Metrónomo** | Practicar a tempo, grabar tomas limpias, grabar con click. |
+| **Presets de usuario** | Guardar tu propio coro personalizado y recuperarlo en cualquier sesión. |
+| **Modo práctica** | Ejercicios de escala, tono objetivo y sostenido de nota raíz. |
+| **WAV export** | Descargar tomas sueltas o mezclas ya masterizadas. |
+
 ## 🖥 VICTUSART RVC (voz entrenada, calidad humana)
 
 Incluido en `victusart_rvc/` — pipeline para entrenar una voz melódica real
@@ -91,7 +135,7 @@ python victusart_rvc/03_convertir_archivo.py --model MiVozMelodica --in mi_voz.w
 
 - **Web**: pitch shift granular (algoritmo Jungle). Suena a efecto, no a persona real.
   La voz humana real requiere el pipeline RVC en VICTUSART.
-- **Latencia**: ~100ms en el Jungle. Usa audífonos para evitar acople.
+- **Latencia**: ~80-120ms según navegador. Usa audífonos para evitar acople.
 - **Chrome**: Solo Chrome/Edge da el rendimiento Web Audio necesario.
   Safari/Firefox funcionan pero con más latencia.
 - **iOS**: MediaPipe Hands puede tener latencia extra en Safari.
@@ -105,4 +149,4 @@ python victusart_rvc/03_convertir_archivo.py --model MiVozMelodica --in mi_voz.w
 
 ---
 
-*Versión celular. Cero apps. Puro navegador.*
+*Versión 2.0.0-Suno — Cero apps. Puro navegador.*

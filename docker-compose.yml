@@ -1,0 +1,60 @@
+services:
+  myflow-studio:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: myflow-studio
+    ports:
+      - "8774:8774"
+    environment:
+      - MYFLOW_BEAT_IA_URL=http://beat-ia:7071/generate-beat
+    volumes:
+      - ./data:/app/data
+      - ./uploads:/app/uploads
+      - ./jobs:/app/jobs
+    networks:
+      - myflow-net
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8774/api/health', timeout=5)"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+
+  beat-ia:
+    build:
+      context: ./beat-ia-service
+      dockerfile: Dockerfile
+    container_name: myflow-beat-ia
+    ports:
+      - "7071:7071"
+    environment:
+      - HF_HOME=/cache
+    volumes:
+      - beat-cache:/cache
+      - beat-jobs:/tmp
+    networks:
+      - myflow-net
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:7071/health', timeout=5)"]
+      interval: 60s
+      timeout: 15s
+      retries: 5
+      start_period: 120s
+
+networks:
+  myflow-net:
+    driver: bridge
+
+volumes:
+  beat-cache:
+  beat-jobs:
