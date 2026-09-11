@@ -1,0 +1,25 @@
+name: MyFlow Studio CI
+
+on:
+  push:
+    branches: [main, master, "fix/**"]
+  pull_request:
+    branches: [main, master]
+
+jobs:
+  smoke:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Required files exist
+        run: |
+          test -f mano_morph_studio.html
+          test -f Dockerfile
+          test -f docker-compose.yml
+          test -f README.md
+      - name: HTML has studio markers
+        run: |
+          grep -q "<!DOCTYPE html>" mano_morph_studio.html
+          grep -qi "morph\|studio\|myflow" mano_morph_studio.html
+      - name: Validate compose syntax
+        run: docker compose -f docker-compose.yml config
